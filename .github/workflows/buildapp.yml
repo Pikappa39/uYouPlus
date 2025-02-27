@@ -110,19 +110,18 @@ jobs:
         env:
           THEOS: ${{ github.workspace }}/theos
 
-     - name: Prepare YouTube iPA
-  id: prepare_youtube
-  run: |
-    pip install gdown
-    gdown "https://drive.google.com/uc?export=download&id=${YOUTUBE_URL}" -O main/YouTube.ipa
-    
-    cd ${{ github.workspace }}/main
-    mv YouTube.ipa YouTube.zip
-    unzip -q YouTube.zip
-    youtube_version=$(defaults read "$(pwd)/Payload/YouTube.app/Info" CFBundleVersion)
-    echo "==> YouTube v$youtube_version downloaded!"
-    sed -i '' "17s#.*#YOUTUBE_VERSION = ${youtube_version}#g" Makefile
-    echo "youtube_version=${youtube_version}" >> $GITHUB_OUTPUT
+        - name: Prepare YouTube iPA
+        id: prepare_youtube
+        run: |
+          pip install gdown
+          gdown --no-check-certificate "$YOUTUBE_URL" -O main/YouTube.ipa
+          cd ${{ github.workspace }}/main
+          mv YouTube.ipa YouTube.zip
+          unzip -q YouTube.zip
+          youtube_version=$(defaults read "$(pwd)/Payload/YouTube.app/Info" CFBundleVersion)
+          echo "==> YouTube v$youtube_version downloaded!"
+          sed -i '' "17s#.*#YOUTUBE_VERSION = ${youtube_version}#g" Makefile
+          echo "youtube_version=${youtube_version}" >> $GITHUB_OUTPUT
 
 
         env:
